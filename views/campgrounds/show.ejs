@@ -2,15 +2,16 @@
     <!-- 這表示 show.ejs 會繼承 boilerplate.ejs 作為模板。 -->
     <!-- layout('layouts/boilerplate') 告訴 EJS-Mate（一個用於 EJS 的模板引擎），這個檔案 (show.ejs) 需要使用 boilerplate.ejs 來包裹內容。 -->
     <link rel="stylesheet" href="/stylesheets/stars.css">
+    <link rel="stylesheet" href="/stylesheets/app.css">
 
     <div class="row">
         <div class="col-6">
-            <div id="map" style="width: 400px; height: 300px;"></div>
+
             <div id="campgroundCarousel" class="carousel slide">
                 <div class="carousel-inner">
                     <% campground.images.forEach((img, i)=> { %>
                         <div class="carousel-item <%= i ===0 ? 'active' : '' %>">
-                            <img src="<%= img.url%>" class="d-block w-100" alt="">
+                            <img crossorigin="anonymous" src="<%= img.url%>" class="d-block w-100" alt="">
                         </div>
 
                         <% }) %>
@@ -64,6 +65,8 @@
             </div>
         </div>
         <div class="col-6">
+            <div id="map"></div>
+
             <% if(currentUser) { %>
                 <h2>Leave a review</h2>
                 <form action="/campgrounds/<%= campground._id%>/reviews" method="POST" class="mb-3 validated-form"
@@ -89,39 +92,34 @@
                             <input type="radio" id="first-rate5" name="review[rating]" value="5" />
                             <label for="first-rate5" title="Amazing">5 stars</label>
                         </fieldset>
+                        <div class="mb-3">
+                            <label class="form-label" for="body">Review Text</label>
+                            <textarea class="form-control" name="review[body]" id="body" rows="3" cols="30"
+                                required></textarea>
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="body">Review Text</label>
-                        <textarea class="form-control" name="review[body]" id="body" rows="3" cols="30"
-                            required></textarea>
-                        <div class="valid-feedback">Looks good!</div>
-                    </div>
+
                     <button class="btn btn-success">Submit</button>
                 </form>
                 <% } %>
                     <% for(let review of campground.reviews) { %>
-                        <div class="mb-3 card">
+                        <div class="card mb-3 ">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <%= review.author.username %>
+                                    <%= review.author.username%>
                                 </h5>
-
-                                <p class="starability-result" data-rating="<%= review.rating %>">
+                                <p class="starability-result" data-rating="<%=review.rating%>">
                                     Rated: <%= review.rating %> stars
                                 </p>
-                                <!-- <h6 class="card-subtitle mb-2 text-muted">By <%= review.author ? review.author.username
-                                        : "Unknown" %>
-                                </h6> -->
-                                <p class="card-text">
-                                    Review: <%= review.body %>
+                                <!-- <h6 class="card-subtitle mb-2 text-muted">By <%= review.author.username%></h6> -->
+                                <p class="card-text">Review: <%= review.body %>
                                 </p>
-                                <% if (currentUser && review.author && review.author.equals(currentUser._id)) { %>
-
+                                <% if( currentUser && review.author.equals(currentUser._id)) {%>
                                     <form
                                         action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE"
                                         method="POST">
-
                                         <button class="btn btn-sm btn-danger">Delete</button>
                                     </form>
                                     <% } %>
